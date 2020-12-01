@@ -1,3 +1,3 @@
-module loglevel
+module logl
 
 go 1.15
