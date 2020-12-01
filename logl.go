@@ -65,13 +65,19 @@ func init() {
 	level = INFO
 }
 
-// Flushes and closes the output stream
-func Close() {
+// Flushes the output stream
+func Flush() {
 	if writer != nil {
 		if b, ok := writer.(*bufio.Writer); ok {
 			b.Flush()
 		}
 	}
+}
+
+// Flushes and closes the output stream
+// If you log to a closed writer nothing happens!!
+func Close() {
+	Flush()
 	if file != nil {
 		file.Close()
 	}
@@ -94,15 +100,18 @@ func SetWriter(out io.Writer) {
 }
 
 // Set the io.writer to write to the file specified
-func SetFileWriter(fileName string) error {
+func SetFileWriter(fileName string, truncate bool) error {
 	var err error
-	file, err = os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	flags := os.O_CREATE | os.O_WRONLY | os.O_APPEND
+	if truncate {
+		flags = flags | os.O_TRUNC
+	}
+	file, err = os.OpenFile(fileName, flags, 0666)
 	if err != nil {
 		return err
 	}
 	writer = bufio.NewWriter(file)
-
-	SetWriter(writer)
+	instance.SetOutput(writer)
 	return nil
 }
 
@@ -116,7 +125,7 @@ func Debug(v ...interface{}) {
 	if level < DEBUG {
 		return
 	}
-	log.Print("[DEBUG] ", fmt.Sprint(v...))
+	instance.Print("[DEBUG] ", fmt.Sprint(v...))
 }
 
 // Write a log message at the INFO level, but only if the logging level is INFO or higher.
@@ -125,7 +134,7 @@ func Info(v ...interface{}) {
 	if level < INFO {
 		return
 	}
-	log.Print("[INFO] ", fmt.Sprint(v...))
+	instance.Print("[INFO] ", fmt.Sprint(v...))
 }
 
 // Logs at the WARN level, see Info() for details
@@ -133,7 +142,7 @@ func Warn(v ...interface{}) {
 	if level < WARN {
 		return
 	}
-	log.Print("[WARN] ", fmt.Sprint(v...))
+	instance.Print("[WARN] ", fmt.Sprint(v...))
 }
 
 // Logs at the ERROR level, see Info() for details
@@ -141,14 +150,14 @@ func Error(v ...interface{}) {
 	if level < ERROR {
 		return
 	}
-	log.Print("[ERROR] ", fmt.Sprint(v...))
+	instance.Print("[ERROR] ", fmt.Sprint(v...))
 }
 
 // Logs at the FATAL level, clss Close() then terminates using os.Exit(1).
 // Only use if you really have to!
 // See Info() for details
-func Fatal(f string, v ...interface{}) {
-	log.Print("[FATAL] "+f, fmt.Sprint(v...))
+func Fatal(v ...interface{}) {
+	instance.Print("[FATAL] ", fmt.Sprint(v...))
 	Close()
 	os.Exit(1)
 }
@@ -159,7 +168,7 @@ func Debugf(f string, v ...interface{}) {
 	if level < DEBUG {
 		return
 	}
-	log.Printf("[DEBUG] "+f, fmt.Sprint(v...))
+	instance.Printf("[DEBUG] "+f, v...)
 }
 
 // Logs at the INFO level, see Info() for details
@@ -168,7 +177,7 @@ func Infof(f string, v ...interface{}) {
 	if level < INFO {
 		return
 	}
-	log.Printf("[INFO] "+f, fmt.Sprint(v...))
+	instance.Printf("[INFO] "+f, v...)
 }
 
 // Logs at the WARN level, see Info() for details
@@ -177,7 +186,7 @@ func Warnf(f string, v ...interface{}) {
 	if level < WARN {
 		return
 	}
-	log.Printf("[WARN] "+f, fmt.Sprint(v...))
+	instance.Printf("[WARN] "+f, v...)
 }
 
 // Logs at the ERROR level, see Info() for details
@@ -186,14 +195,14 @@ func Errorf(f string, v ...interface{}) {
 	if level < ERROR {
 		return
 	}
-	log.Printf("[ERROR] "+f, fmt.Sprint(v...))
+	instance.Printf("[ERROR] "+f, v...)
 }
 
 // Logs at the FATAL level, clss Close() then terminates using os.Exit(1).
 // Only use if you really have to!
 // Arguments are handled in the manner of fmt.Printf. See Info() for details
 func Fatalf(f string, v ...interface{}) {
-	log.Printf("[FATAL] "+f, fmt.Sprint(v...))
+	instance.Printf("[FATAL] "+f, v...)
 	Close()
 	os.Exit(1)
 }

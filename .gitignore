@@ -1,4 +1,4 @@
 *.exe
 !.gitkeep
-!tmp/
-tmp/*.log
+!test/tmp/
+test/tmp/*.log
