@@ -5,7 +5,7 @@ The objective was to write a logging package that is small and simple. The alter
 To do this logl wraps log and calls the relevant functions in log to write the messages. It uses the writer instance in log so it is possible to also use log if required.
 
 The output looks like:
----
+```
 2020/12/02 09:35:11 logl_test.go:40: [ERR] Line 1
 2020/12/02 09:35:11 logl_test.go:41: [WRN] Line 2
 2020/12/02 09:35:11 logl_test.go:42: [INF] Line 3
@@ -14,7 +14,7 @@ The output looks like:
 2020/12/02 09:35:11 logl_test.go:45: [WRN] Line 6
 2020/12/02 09:35:11 logl_test.go:46: [INF] Line 7
 2020/12/02 09:35:11 logl_test.go:47: [DBG] Line 8
----
+```
 
 ## ToDo
 ~~* Look at switching to log's instance of log.Logger.  So logl and log would write to the same output.~~
