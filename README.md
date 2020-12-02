@@ -17,7 +17,7 @@ The output looks like:
 ```
 
 ## ToDo
-~~* Look at switching to log's instance of log.Logger.  So logl and log would write to the same output.~~
+* ~~Look at switching to log's instance of log.Logger.  So logl and log would write to the same output.~~
 * Log rotation on size and day with ageing off.
 * Multiple outputs e.g. log and file (see io.MultiWriter)
 * Look at changing to using multiple instances of log each logging with a diffrent prefix to the same writer. Uisng a dummy log instance to disable writing for levels. I think a lot of coding for little gain.
