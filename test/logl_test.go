@@ -64,10 +64,11 @@ func TestFileWrite(t *testing.T) {
 		i++
 		line := sc.Text()
 		expected := fmt.Sprintf("[%s] Line %d", l, i)
-		if line[33:] != expected {
-			t.Errorf("line %d \"%s\" != \"%s\"", i, line[33:], expected)
+		msg := line[len(line)-12:]
+		if msg != expected {
+			t.Errorf("line %d \"%s\" != \"%s\"", i, msg, expected)
 		}
-		function := line[20 : len(line)-18]
+		function := line[20 : len(line)-17]
 		if function != "logl_test.go" {
 			t.Errorf("line %d \"%s\" != \"%s\"", i, function, "logl_test.go")
 		}

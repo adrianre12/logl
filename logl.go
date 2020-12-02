@@ -125,7 +125,7 @@ func Debug(v ...interface{}) {
 	if level < DBG {
 		return
 	}
-	instance.Print("[DBG] ", fmt.Sprint(v...))
+	instance.Output(2, "[DBG] "+fmt.Sprint(v...))
 }
 
 // Write a log message at the INFO level, but only if the logging level is INFO or higher.
@@ -134,7 +134,7 @@ func Info(v ...interface{}) {
 	if level < INF {
 		return
 	}
-	instance.Print("[INF] ", fmt.Sprint(v...))
+	instance.Output(2, "[INF] "+fmt.Sprint(v...))
 }
 
 // Logs at the WARN level, see Info() for details
@@ -142,7 +142,7 @@ func Warn(v ...interface{}) {
 	if level < WRN {
 		return
 	}
-	instance.Print("[WRN] ", fmt.Sprint(v...))
+	instance.Output(2, "[WRN] "+fmt.Sprint(v...))
 }
 
 // Logs at the ERROR level, see Info() for details
@@ -150,7 +150,7 @@ func Error(v ...interface{}) {
 	if level < ERR {
 		return
 	}
-	instance.Print("[ERR] ", fmt.Sprint(v...))
+	instance.Output(2, "[ERR] "+fmt.Sprint(v...))
 }
 
 // Logs at the FATAL level, clss Close() then terminates using os.Exit(1).
@@ -168,7 +168,7 @@ func Debugf(f string, v ...interface{}) {
 	if level < DBG {
 		return
 	}
-	instance.Printf("[DBG] "+f, v...)
+	instance.Output(2, "[DBG] "+fmt.Sprintf(f, v...))
 }
 
 // Logs at the INFO level, see Info() for details
@@ -177,7 +177,7 @@ func Infof(f string, v ...interface{}) {
 	if level < INF {
 		return
 	}
-	instance.Printf("[INF] "+f, v...)
+	instance.Output(2, "[INF] "+fmt.Sprintf(f, v...))
 }
 
 // Logs at the WARN level, see Info() for details
@@ -186,7 +186,7 @@ func Warnf(f string, v ...interface{}) {
 	if level < WRN {
 		return
 	}
-	instance.Printf("[WRN] "+f, v...)
+	instance.Output(2, "[WRN] "+fmt.Sprintf(f, v...))
 }
 
 // Logs at the ERROR level, see Info() for details
@@ -195,14 +195,14 @@ func Errorf(f string, v ...interface{}) {
 	if level < ERR {
 		return
 	}
-	instance.Printf("[ERR] "+f, v...)
+	instance.Output(2, "[ERR] "+fmt.Sprintf(f, v...))
 }
 
 // Logs at the FATAL level, clss Close() then terminates using os.Exit(1).
 // Only use if you really have to!
 // Arguments are handled in the manner of fmt.Printf. See Info() for details
 func Fatalf(f string, v ...interface{}) {
-	instance.Printf("[FTL] "+f, v...)
+	instance.Output(2, "[FTL] "+fmt.Sprintf(f, v...))
 	Close()
 	os.Exit(1)
 }
