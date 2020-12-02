@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"logl"
 	"math"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/adrianre12/logl"
 )
 
 //Not Much of a test I know, but it proves it works
