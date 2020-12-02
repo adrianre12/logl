@@ -3,6 +3,7 @@ package test
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"logl"
 	"math"
 	"os"
@@ -45,12 +46,15 @@ func TestFileWrite(t *testing.T) {
 	logl.Warnf("Line %d", 6)
 	logl.Infof("Line %d", 7)
 	logl.Debugf("Line %d", 8)
+
+	log.Println("This is from log")
 	logl.Close()
 
 	lf, err := os.Open("tmp/test.log")
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer lf.Close()
 
 	sc := bufio.NewScanner(lf)
@@ -59,9 +63,11 @@ func TestFileWrite(t *testing.T) {
 	i := 0
 	var l logl.Level
 
-	for sc.Scan() {
+	// test logl writing
+	for sc.Scan() && (i < 8) {
 		l = logl.Level(math.Mod(float64(i), 4.0) + 1)
 		i++
+
 		line := sc.Text()
 		expected := fmt.Sprintf("[%s] Line %d", l, i)
 		msg := line[len(line)-12:]
@@ -81,6 +87,11 @@ func TestFileWrite(t *testing.T) {
 				t.Errorf("Line %d, timestamp delta > 5s: %f", i, td.Seconds())
 			}
 		}
-
+	}
+	// test log writing
+	line := sc.Text()
+	msg := line[len(line)-16:]
+	if msg != "This is from log" {
+		t.Errorf("log output \"%s\" does nto end with \"This is from log\"", msg)
 	}
 }
