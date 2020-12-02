@@ -7,22 +7,23 @@ import (
 	"math"
 	"os"
 	"testing"
+	"time"
 )
 
 //Not Much of a test I know, but it proves it works
 func TestLogger(t *testing.T) {
 	fmt.Println("Start")
-	if level := logl.GetLevel(); level != logl.INFO {
+	if level := logl.GetLevel(); level != logl.INF {
 		t.Errorf("Wrong log level %s", level)
 	}
-	logl.SetLevel(logl.DEBUG)
-	if level := logl.GetLevel(); level != logl.DEBUG {
+	logl.SetLevel(logl.DBG)
+	if level := logl.GetLevel(); level != logl.DBG {
 		t.Fatalf("Wrong log level %s", level)
 	}
 	logl.Info("Test", "ing")
 
 	logl.Debug("Aha!")
-	logl.SetLevel(logl.WARN)
+	logl.SetLevel(logl.WRN)
 	logl.Debug("This should not show")
 	logl.Warnf("This should be %d int followed by an error: %s", 1, fmt.Errorf("A new error"))
 
@@ -30,7 +31,7 @@ func TestLogger(t *testing.T) {
 
 // A better test
 func TestFileWrite(t *testing.T) {
-	logl.SetLevel(logl.DEBUG)
+	logl.SetLevel(logl.DBG)
 	err := logl.SetFileWriter("tmp/test.log", true)
 	if err != nil {
 		t.Fatal(err)
@@ -54,6 +55,7 @@ func TestFileWrite(t *testing.T) {
 
 	sc := bufio.NewScanner(lf)
 
+	now := time.Now()
 	i := 0
 	var l logl.Level
 
@@ -65,5 +67,19 @@ func TestFileWrite(t *testing.T) {
 		if line[33:] != expected {
 			t.Errorf("line %d \"%s\" != \"%s\"", i, line[33:], expected)
 		}
+		function := line[20 : len(line)-18]
+		if function != "logl_test.go" {
+			t.Errorf("line %d \"%s\" != \"%s\"", i, function, "logl_test.go")
+		}
+		if tt, err := time.Parse("2006/01/02 03:04:05", line[:19]); err != nil {
+			t.Errorf("Line %d, failed to parse timestamp \"%s\"", i, line[:20])
+		} else {
+			td := now.Sub(tt)
+
+			if math.Abs(td.Seconds()) > 5 {
+				t.Errorf("Line %d, timestamp delta > 5s: %f", i, td.Seconds())
+			}
+		}
+
 	}
 }
