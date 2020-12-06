@@ -23,10 +23,11 @@ const (
 	WRN
 	INF
 	DBG
+	TRC
 )
 
 func (l Level) String() string {
-	return []string{"NONE", "ERR", "WRN", "INF", "DBG"}[l]
+	return []string{"NONE", "ERR", "WRN", "INF", "DBG", "TRC"}[l]
 }
 
 // For conveniance these are copied from the log code.
@@ -74,12 +75,13 @@ func Flush() {
 }
 
 // Flushes and closes the output stream
-// If you log to a closed writer nothing happens!!
+// Sets the output stream to the default os.Stderr
 func Close() {
 	Flush()
 	if file != nil {
 		file.Close()
 	}
+	SetWriterStderr()
 }
 
 // Set the minimum logging level NONE ... DEBUG
@@ -90,6 +92,12 @@ func SetLevel(l Level) {
 // The current logging level
 func GetLevel() Level {
 	return level
+}
+
+// Set the io.writer to os.Stderr (the defalut writer)
+func SetWriterStderr() {
+	writer = nil
+	log.SetOutput(os.Stderr)
 }
 
 // Set the io.writer for log.Logger
@@ -119,7 +127,15 @@ func SetFlags(flag int) {
 	log.SetFlags(flag)
 }
 
-// Logs at the DEBUG level, see Info() for details
+// Logs at the TRC level, see Info() for details
+func Trace(v ...interface{}) {
+	if level < DBG {
+		return
+	}
+	log.Output(2, "[TRC] "+fmt.Sprint(v...))
+}
+
+// Logs at the DBG level, see Info() for details
 func Debug(v ...interface{}) {
 	if level < DBG {
 		return
@@ -127,7 +143,7 @@ func Debug(v ...interface{}) {
 	log.Output(2, "[DBG] "+fmt.Sprint(v...))
 }
 
-// Write a log message at the INFO level, but only if the logging level is INFO or higher.
+// Write a log message at the INF level, but only if the logging level is INF or higher.
 // The message supplied will be prefixed with the logging level
 func Info(v ...interface{}) {
 	if level < INF {
@@ -136,7 +152,7 @@ func Info(v ...interface{}) {
 	log.Output(2, "[INF] "+fmt.Sprint(v...))
 }
 
-// Logs at the WARN level, see Info() for details
+// Logs at the WRN level, see Info() for details
 func Warn(v ...interface{}) {
 	if level < WRN {
 		return
@@ -144,7 +160,7 @@ func Warn(v ...interface{}) {
 	log.Output(2, "[WRN] "+fmt.Sprint(v...))
 }
 
-// Logs at the ERROR level, see Info() for details
+// Logs at the ERR level, see Info() for details
 func Error(v ...interface{}) {
 	if level < ERR {
 		return
@@ -152,7 +168,7 @@ func Error(v ...interface{}) {
 	log.Output(2, "[ERR] "+fmt.Sprint(v...))
 }
 
-// Logs at the FATAL level, clss Close() then terminates using os.Exit(1).
+// Logs at the FATAL level, calls Close() then terminates using os.Exit(1).
 // Only use if you really have to!
 // See Info() for details
 func Fatal(v ...interface{}) {
@@ -161,7 +177,16 @@ func Fatal(v ...interface{}) {
 	os.Exit(1)
 }
 
-// Logs at the DEBUG level, see Info() for details
+// Logs at the TRC level, see Info() for details
+// Arguments are handled in the manner of fmt.Printf.
+func Tracef(f string, v ...interface{}) {
+	if level < TRC {
+		return
+	}
+	log.Output(2, "[TRC] "+fmt.Sprintf(f, v...))
+}
+
+// Logs at the DBG level, see Info() for details
 // Arguments are handled in the manner of fmt.Printf.
 func Debugf(f string, v ...interface{}) {
 	if level < DBG {
@@ -170,7 +195,7 @@ func Debugf(f string, v ...interface{}) {
 	log.Output(2, "[DBG] "+fmt.Sprintf(f, v...))
 }
 
-// Logs at the INFO level, see Info() for details
+// Logs at the INF level, see Info() for details
 // Arguments are handled in the manner of fmt.Printf.
 func Infof(f string, v ...interface{}) {
 	if level < INF {
@@ -179,7 +204,7 @@ func Infof(f string, v ...interface{}) {
 	log.Output(2, "[INF] "+fmt.Sprintf(f, v...))
 }
 
-// Logs at the WARN level, see Info() for details
+// Logs at the WRN level, see Info() for details
 // Arguments are handled in the manner of fmt.Printf.
 func Warnf(f string, v ...interface{}) {
 	if level < WRN {
@@ -188,7 +213,7 @@ func Warnf(f string, v ...interface{}) {
 	log.Output(2, "[WRN] "+fmt.Sprintf(f, v...))
 }
 
-// Logs at the ERROR level, see Info() for details
+// Logs at the ERR level, see Info() for details
 // Arguments are handled in the manner of fmt.Printf.
 func Errorf(f string, v ...interface{}) {
 	if level < ERR {
@@ -197,7 +222,7 @@ func Errorf(f string, v ...interface{}) {
 	log.Output(2, "[ERR] "+fmt.Sprintf(f, v...))
 }
 
-// Logs at the FATAL level, clss Close() then terminates using os.Exit(1).
+// Logs at the FTL level, calls Close() then terminates using os.Exit(1).
 // Only use if you really have to!
 // Arguments are handled in the manner of fmt.Printf. See Info() for details
 func Fatalf(f string, v ...interface{}) {
