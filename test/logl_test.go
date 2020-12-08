@@ -17,17 +17,17 @@ import (
 //Not Much of a test I know, but it proves it works
 func TestLogger(t *testing.T) {
 	fmt.Println("Start")
-	if level := logl.GetLevel(); level != logl.INF {
+	if level := logl.GetLevel(); level != logl.INFO {
 		t.Errorf("Wrong log level %s", level)
 	}
-	logl.SetLevel(logl.DBG)
-	if level := logl.GetLevel(); level != logl.DBG {
+	logl.SetLevel(logl.DEBUG)
+	if level := logl.GetLevel(); level != logl.DEBUG {
 		t.Fatalf("Wrong log level %s", level)
 	}
 	logl.Info("Test", "ing")
 
 	logl.Debug("Aha!")
-	logl.SetLevel(logl.WRN)
+	logl.SetLevel(logl.WARN)
 	logl.Debug("This should not show")
 	logl.Warnf("This should be %d int followed by an error: %s", 1, fmt.Errorf("A new error"))
 
@@ -36,7 +36,7 @@ func TestLogger(t *testing.T) {
 // A better test
 func TestFileUnformated(t *testing.T) {
 
-	logl.SetLevel(logl.DBG)
+	logl.SetLevel(logl.DEBUG)
 	err := logl.SetFileWriter("tmp/unformated.log", true)
 	if err != nil {
 		t.Fatal(err)
@@ -79,7 +79,7 @@ func TestFileUnformated(t *testing.T) {
 		if function != "logl_test.go" {
 			t.Errorf("line %d \"%s\" != \"%s\"", i, function, "logl_test.go")
 		}
-		if tt, err := time.Parse("2006/01/02 03:04:05", timestamp); err != nil {
+		if tt, err := time.Parse("2006/01/02 15:04:05", timestamp); err != nil {
 			t.Errorf("Line %d, failed to parse timestamp \"%s\"", i, timestamp)
 		} else {
 			td := now.Sub(tt)
@@ -100,7 +100,7 @@ func TestFileUnformated(t *testing.T) {
 
 func TestFileFormated(t *testing.T) {
 
-	logl.SetLevel(logl.DBG)
+	logl.SetLevel(logl.DEBUG)
 	err := logl.SetFileWriter("tmp/formated.log", true)
 	if err != nil {
 		t.Fatal(err)
@@ -142,7 +142,7 @@ func TestFileFormated(t *testing.T) {
 		if function != "logl_test.go" {
 			t.Errorf("line %d \"%s\" != \"%s\"", i, function, "logl_test.go")
 		}
-		if tt, err := time.Parse("2006/01/02 03:04:05", timestamp); err != nil {
+		if tt, err := time.Parse("2006/01/02 15:04:05", timestamp); err != nil {
 			t.Errorf("Line %d, failed to parse timestamp \"%s\"", i, timestamp)
 		} else {
 			td := now.Sub(tt)
