@@ -172,7 +172,7 @@ func Error(v ...interface{}) {
 // Only use if you really have to!
 // See Info() for details
 func Fatal(v ...interface{}) {
-	log.Print("[FTL] ", fmt.Sprint(v...))
+	log.Print("[FATAL] ", fmt.Sprint(v...))
 	Close()
 	os.Exit(1)
 }
@@ -226,7 +226,7 @@ func Errorf(f string, v ...interface{}) {
 // Only use if you really have to!
 // Arguments are handled in the manner of fmt.Printf. See Info() for details
 func Fatalf(f string, v ...interface{}) {
-	log.Output(2, "[FTL] "+fmt.Sprintf(f, v...))
+	log.Output(2, "[FATAL] "+fmt.Sprintf(f, v...))
 	Close()
 	os.Exit(1)
 }
