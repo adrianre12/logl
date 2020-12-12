@@ -2,6 +2,7 @@ package test
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math"
@@ -92,9 +93,8 @@ func TestFileUnformated(t *testing.T) {
 	}
 	// test log writing
 	line := sc.Text()
-	msg := line[len(line)-16:]
-	if msg != "This is from log" {
-		t.Errorf("log output \"%s\" does not end with \"This is from log\"", msg)
+	if !strings.HasSuffix(line, "This is via log") {
+		t.Errorf("log output \"%s\" does not end with \"This is via log\"", line)
 	}
 }
 
@@ -152,5 +152,27 @@ func TestFileFormated(t *testing.T) {
 			}
 		}
 		i++
+	}
+}
+
+func TestJson(t *testing.T) {
+	var level logl.Level // = 0
+	for level = logl.NONE; level <= logl.TRACE; level++ {
+		b, err := json.Marshal(level)
+		if err != nil {
+			t.Fatalf("Failed to marshal %v", err)
+		}
+		if fmt.Sprintf("%q", level.String()) != string(b) {
+			t.Fatalf("%s != %s", level.String(), string(b))
+		}
+		var result logl.Level
+		err = json.Unmarshal(b, &result)
+		if err != nil {
+			t.Fatalf("Failed to unmarshal %v", err)
+		}
+		if result != level {
+			t.Fatalf("Wrong result %d (%s)", result, result.String())
+		}
+		t.Logf("Passed %s", level.String())
 	}
 }

@@ -9,6 +9,7 @@ package logl
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -26,8 +27,51 @@ const (
 	TRACE
 )
 
+var toString = map[Level]string{
+	NONE:  "NONE",
+	ERROR: "ERROR",
+	WARN:  "WARN",
+	INFO:  "INFO",
+	DEBUG: "DEBUG",
+	TRACE: "TRACE",
+}
+
+var toId = map[string]Level{
+	"NONE":  NONE,
+	"ERROR": ERROR,
+	"WARN":  WARN,
+	"INFO":  INFO,
+	"DEBUG": DEBUG,
+	"TRACE": TRACE,
+}
+
 func (l Level) String() string {
-	return []string{"NONE", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"}[l]
+	return toString[l]
+}
+
+// MarshalJSON marshals the Level as a quoted json string
+func (l Level) MarshalJSON() ([]byte, error) {
+	// buf := bytes.NewBufferString(`"`)
+	// buf.WriteString(toString[l])
+	// buf.WriteString(`"`)
+	// return buf.Bytes(), nil
+	return []byte(fmt.Sprintf("%q", toString[l])), nil
+}
+
+// UnmarshalJSON unmashals a quoted json string to the Level value
+func (l *Level) UnmarshalJSON(b []byte) error {
+	var s string
+	err := json.Unmarshal(b, &s)
+	if err != nil {
+		return err
+	}
+	// if the string is not foound set it to INFO
+	if id, ok := toId[s]; ok {
+		*l = id
+	} else {
+		*l = INFO
+	}
+	return nil
 }
 
 // For conveniance these are copied from the log code.
