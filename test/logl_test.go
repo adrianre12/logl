@@ -80,11 +80,10 @@ func TestFileUnformated(t *testing.T) {
 		if function != "logl_test.go" {
 			t.Errorf("line %d \"%s\" != \"%s\"", i, function, "logl_test.go")
 		}
-		if tt, err := time.Parse("2006/01/02 15:04:05", timestamp); err != nil {
+		if tt, err := time.ParseInLocation("2006/01/02 15:04:05", timestamp, time.Local); err != nil {
 			t.Errorf("Line %d, failed to parse timestamp \"%s\"", i, timestamp)
 		} else {
 			td := now.Sub(tt)
-
 			if math.Abs(td.Seconds()) > 5 {
 				t.Errorf("Line %d, timestamp delta > 5s: %f", i, td.Seconds())
 			}
@@ -142,11 +141,10 @@ func TestFileFormated(t *testing.T) {
 		if function != "logl_test.go" {
 			t.Errorf("line %d \"%s\" != \"%s\"", i, function, "logl_test.go")
 		}
-		if tt, err := time.Parse("2006/01/02 15:04:05", timestamp); err != nil {
+		if tt, err := time.ParseInLocation("2006/01/02 15:04:05", timestamp, time.Local); err != nil {
 			t.Errorf("Line %d, failed to parse timestamp \"%s\"", i, timestamp)
 		} else {
 			td := now.Sub(tt)
-
 			if math.Abs(td.Seconds()) > 5 {
 				t.Errorf("Line %d, timestamp delta > 5s: %f", i, td.Seconds())
 			}
