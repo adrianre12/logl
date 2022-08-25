@@ -216,7 +216,7 @@ func Error(v ...interface{}) {
 // Only use if you really have to!
 // See Info() for details
 func Fatal(v ...interface{}) {
-	log.Print("[FATAL] ", fmt.Sprint(v...))
+	log.Output(2, "[FATAL] "+fmt.Sprint(v...))
 	Close()
 	os.Exit(1)
 }
